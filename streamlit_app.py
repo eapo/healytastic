@@ -25,8 +25,9 @@ if uploaded_file is not None:
     try:
         # Read uploaded CSV into a DataFrame
         uploaded_df = pd.read_csv(uploaded_file)
-        demo_datasets["Uploaded CSV"] = uploaded_df
-        st.success("CSV uploaded successfully!")
+        uploaded_filename = uploaded_file.name  # Get the filename
+        demo_datasets[uploaded_filename] = uploaded_df  # Use filename as the key
+        st.success(f"CSV file '{uploaded_filename}' uploaded successfully!")
     except Exception as e:
         st.error(f"Error loading CSV: {e}")
 
@@ -52,7 +53,7 @@ payload = {
     "messages": [
         {
             "role": "system",
-            "content": "You are an AI that detects anomalies in data. Tell me the percentage of probability, create me a markdown table, and explain why the row is anomalous.",
+            "content": f"Analyze the dataset below for anomalies in {selected_dataset}. Detect issues, if present (and not limited to) such as: - Duplicate records. - Mismatched patient information (e.g., between NPI, claims, and insurance data). - Fraudulent billing patterns. - Resource mismanagement (e.g., unused allocations). - Cross-state compliance violations.",
         },
         {
             "role": "user",
