@@ -19,11 +19,22 @@ demo_datasets = {
     ]),
 }
 
-# User selects a dataset
+# File upload for custom CSV
+uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+if uploaded_file is not None:
+    try:
+        # Read uploaded CSV into a DataFrame
+        uploaded_df = pd.read_csv(uploaded_file)
+        demo_datasets["Uploaded CSV"] = uploaded_df
+        st.success("CSV uploaded successfully!")
+    except Exception as e:
+        st.error(f"Error loading CSV: {e}")
+
+# Dropdown to select a dataset
 dataset_options = list(demo_datasets.keys())
 selected_dataset = st.selectbox("Select a dataset to analyze:", dataset_options)
 
-# Display the selected dataset as a DataFrame
+# Display the selected dataset
 st.write("### Selected Dataset:")
 st.dataframe(demo_datasets[selected_dataset])
 
