@@ -132,7 +132,7 @@ else:
             "messages": [
                 {
                     "role": "system",
-                    "content": "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies or suspicious crucial for Government operations. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Make sure it follows government norms."
+                    "content": "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies or suspicious crucial for Government operations. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Make sure it follows government norms. Also, provide a table with the anomalies, their corresponding entries and the solutions/suggested action."
                     ,
                 },
                 {"role": "user", "content": f"Dataset: {query_dataset_1}"},
@@ -234,7 +234,7 @@ else:
                             {
                                 "role": "system",
                                 "content": (
-                                    "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies or suspicious crucial for Government operations. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Make sure it follows government norms."
+                                    "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies or suspicious crucial for Government operations. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Make sure it follows government norms. Also, provide a table with the anomalies, their corresponding entries and the solutions/suggested action."
                                 ),
                             },
                             {"role": "user", "content": f"Data: {content}"},
@@ -265,7 +265,7 @@ else:
                     {
                         "role": "system",
                         "content": (
-                            "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies or suspicious crucial for Government operations. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Make sure it follows government norms."
+                            "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies or suspicious crucial for Government operations. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Make sure it follows government norms. Also, provide a table with the anomalies, their corresponding entries and the solutions/suggested action."
                         ),
                     },
                     {"role": "user", "content": f"Dataset: {query_combined_dataset}"},
