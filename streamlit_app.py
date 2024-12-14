@@ -1,9 +1,7 @@
-import altair as alt
 import pandas as pd
 import streamlit as st
 import requests
 import firebase_admin
-import json
 from firebase_admin import credentials, db, auth
 
 # Streamlit app configuration and title
@@ -16,6 +14,7 @@ firebase_key_dict = dict(firebase_key)
 # Initialize Firebase Admin SDK
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_key_dict)
+    # cred = credentials.Certificate("serviceAccountKey.json")
     firebase_admin.initialize_app(cred, {
         "databaseURL": "https://data-vision-4b7ba-default-rtdb.firebaseio.com"
     })
@@ -104,8 +103,31 @@ else:
     dataset_options = list(demo_datasets.keys())
     selected_dataset = st.selectbox("Select a dataset to analyze:", dataset_options)
 
+    # Display the selected dataset
     st.write("### Selected Dataset:")
     st.dataframe(demo_datasets[selected_dataset])
+
+    # Allow users to edit the dataset
+    st.write("### Edit the Dataset Before Analysis:")
+    editable_dataset = st.data_editor(demo_datasets[selected_dataset], num_rows="dynamic")
+
+    # Check if the dataset has been edited
+    if editable_dataset.equals(demo_datasets[selected_dataset]):
+        edited = False
+    else:
+        edited = True
+
+    # Store the dataset for the analysis
+    dataset_to_analyze = editable_dataset if edited else demo_datasets[selected_dataset]
+
+    # Save the dataset
+    if st.button("Save Changes"):
+        if edited:
+            demo_datasets[selected_dataset] = editable_dataset
+            st.success(f"Changes to '{selected_dataset}' dataset saved successfully!")
+            st.dataframe(editable_dataset)  # Display the updated dataset
+        else:
+            st.warning("No changes detected in the dataset!")
 
     # API configuration
     url = "https://api.x.ai/v1/chat/completions"
@@ -115,13 +137,13 @@ else:
     }
 
     # Convert the selected DataFrame to a JSON-like structure for the query
-    query_dataset = demo_datasets[selected_dataset].to_dict(orient="records")
+    query_dataset = dataset_to_analyze.to_dict(orient="records")
 
     payload = {
         "messages": [
             {
                 "role": "system",
-                "content": f"Analyze the dataset below for anomalies in {selected_dataset}. Detect issues, if present (and not limited to) such as: - Duplicate records. - Mismatched patient information (e.g., between NPI, claims, and insurance data). - Fraudulent billing patterns. - Resource mismanagement (e.g., unused allocations). - Cross-state compliance violations.",
+                "content": f"Analyze the dataset below for anomalies in {selected_dataset} and create a table for each record. Detect issues, if present (and not limited to) such as: - Duplicate records. - Mismatched patient information (e.g., between NPI, claims, and insurance data). - Fraudulent billing patterns. - Resource mismanagement (e.g., unused allocations). - Cross-state compliance violations.",
             },
             {
                 "role": "user",
@@ -151,7 +173,7 @@ else:
         else:
             st.error(f"Error: {response.status_code}")
             st.text(response.text)
-    
+
 # Placeholder for additional functionality
 def additional_functionality():
     st.write("Additional functionality can be integrated here.")
