@@ -163,7 +163,7 @@ else:
         df2 = st.session_state["datasets"]["Dataset 2"]
 
         combine_prompt = (
-            "Combine the following two datasets into a single cohesive dataset. "
+            "Merge the following two datasets into a single cohesive dataset. "
             "Ensure all matching columns are aligned, and any non-overlapping columns are included. "
             "Return the result as CSV text."
         )
