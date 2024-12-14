@@ -163,8 +163,11 @@ else:
         df2 = st.session_state["datasets"]["Dataset 2"]
 
         combine_prompt = (
-            "Combine the following two datasets into a single cohesive dataset. Ensure all matching columns are aligned, and any non-overlapping columns are included. Return the result as CSV text only and no other stuff whatsoever."
+            "Combine the following two datasets into a single cohesive dataset. "
+            "Ensure all matching columns are aligned, and any non-overlapping columns are included. "
+            "Return the result as CSV text."
         )
+        
         query_dataset_1 = df1.to_dict(orient="records")
         query_dataset_2 = df2.to_dict(orient="records")
 
