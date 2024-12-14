@@ -11,7 +11,7 @@ st.set_page_config(page_title="Anomaly Detection", page_icon="📊")
 st.title("Anomaly Detection API")
 
 firebase_key = st.secrets["SERVICE_ACCOUNT_KEY"]
-firebase_key_dict = json.loads(json.dumps(firebase_key))
+firebase_key_dict = dict(firebase_key)
 
 # Initialize Firebase Admin SDK
 if not firebase_admin._apps:
