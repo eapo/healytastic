@@ -3,15 +3,19 @@ import pandas as pd
 import streamlit as st
 import requests
 import firebase_admin
+import json
 from firebase_admin import credentials, db, auth
 
 # Streamlit app configuration and title
 st.set_page_config(page_title="Anomaly Detection", page_icon="📊")
 st.title("Anomaly Detection API")
 
+firebase_key = st.secrets["SERVICE_ACCOUNT_KEY"]
+firebase_key_dict = json.loads(json.dumps(firebase_key))
+
 # Initialize Firebase Admin SDK
 if not firebase_admin._apps:
-    cred = credentials.Certificate("serviceAccountKey.json")
+    cred = credentials.Certificate(firebase_key_dict)
     firebase_admin.initialize_app(cred, {
         "databaseURL": "https://data-vision-4b7ba-default-rtdb.firebaseio.com"
     })
