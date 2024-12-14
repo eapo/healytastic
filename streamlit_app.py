@@ -164,8 +164,9 @@ else:
 
         combine_prompt = (
             "Merge the following two datasets into a single cohesive dataset. "
-            "Ensure all matching columns are aligned, and any non-overlapping columns are included. "
-            "Return the result as CSV text."
+            "Ensure columns with similar meanings (for e.g., 'name' and 'full name', etc.) are merged into one, "
+            "prioritizing consistent data. Resolve duplicate or conflicting values by taking the most complete information. "
+            "Include all other non-overlapping columns. Return the result as CSV text."
         )
         
         query_dataset_1 = df1.to_dict(orient="records")
