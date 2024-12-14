@@ -1,12 +1,13 @@
+import io
 import pandas as pd
 import streamlit as st
 import requests
 import firebase_admin
 from firebase_admin import credentials, db, auth
 
-# Streamlit app configuration and title
-st.set_page_config(page_title="Anomaly Detection", page_icon="📊")
-st.title("Anomaly Detection API")
+# Streamlit app configuration
+st.set_page_config(page_title="DataVision.AI", page_icon="📊")
+st.title("DataVision.AI")
 
 firebase_key = st.secrets["SERVICE_ACCOUNT_KEY"]
 firebase_key_dict = dict(firebase_key)
@@ -28,9 +29,8 @@ def register_user(email, password):
         return {"status": "error", "message": str(e)}
 
 def login_user(email, password):
-    ref = db.reference(f"users/{email.replace('.', ',')}")
-    user_data = ref.get()
-    if user_data and user_data["password"] == password:
+    ref = db.reference(f"users/{email.replace('.', ',')}").get()
+    if ref and ref["password"] == password:
         return {"status": "success", "message": "Login successful!"}
     return {"status": "error", "message": "Invalid credentials."}
 
@@ -38,12 +38,18 @@ def save_user_to_db(email, password):
     ref = db.reference(f"users/{email.replace('.', ',')}")
     ref.set({"email": email, "password": password})
 
-# Initialize session state for login status
+# Initialize session state
 if "logged_in" not in st.session_state:
     st.session_state["logged_in"] = False
     st.session_state["email"] = ""
+if "datasets" not in st.session_state:
+    st.session_state["datasets"] = {}  # Dictionary to store uploaded datasets
+if "combined_df" not in st.session_state:
+    st.session_state["combined_df"] = None
+if "allow_second_upload" not in st.session_state:
+    st.session_state["allow_second_upload"] = False  # Control upload of second CSV
 
-# Login and registration workflow
+# Login and Registration Workflow
 if not st.session_state["logged_in"]:
     st.subheader("Login")
     login_email = st.text_input("Email")
@@ -54,7 +60,7 @@ if not st.session_state["logged_in"]:
             st.session_state["logged_in"] = True
             st.session_state["email"] = login_email
             st.success(result["message"])
-            st.rerun()  # Re-render the page
+            st.rerun()
         else:
             st.error(result["message"])
 
@@ -69,111 +75,208 @@ if not st.session_state["logged_in"]:
         else:
             st.error(result["message"])
 else:
-    # Main app functionality after login
+    # Main App Functionality After Login
     st.success(f"Welcome, {st.session_state['email']}!")
     if st.button("Logout"):
         st.session_state["logged_in"] = False
         st.session_state["email"] = ""
-        st.rerun()  # Re-render the page
+        st.rerun()
 
-    # Demo datasets
-    demo_datasets = {
-        "Electoral": pd.DataFrame([
-            {"name": "A", "age": 25},
-            {"name": "B", "age": 55},
-        ]),
-        "Hospital": pd.DataFrame([
-            {"name": "C", "age": 25, "bmi": 21},
-            {"name": "D", "age": 55, "bmi": 32},
-        ]),
-    }
+    # Single CSV Upload by Default
+    st.write("### Upload Your Dataset")
+    uploaded_file_1 = st.file_uploader("Upload First CSV File", type=["csv"], key="file_1")
 
-    # File upload for custom CSV
-    uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
-    if uploaded_file is not None:
+    if uploaded_file_1:
         try:
-            uploaded_df = pd.read_csv(uploaded_file)
-            uploaded_filename = uploaded_file.name
-            demo_datasets[uploaded_filename] = uploaded_df
-            st.success(f"CSV file '{uploaded_filename}' uploaded successfully!")
+            df1 = pd.read_csv(uploaded_file_1)
+            st.session_state["datasets"]["Dataset 1"] = df1
         except Exception as e:
-            st.error(f"Error loading CSV: {e}")
+            st.error(f"Error loading the first dataset: {e}")
 
-    # Dropdown to select a dataset
-    dataset_options = list(demo_datasets.keys())
-    selected_dataset = st.selectbox("Select a dataset to analyze:", dataset_options)
+    # Editable Dataset for First Upload
+    if "Dataset 1" in st.session_state["datasets"]:
+        st.write("### Dataset 1 (Editable)")
+        st.session_state["datasets"]["Dataset 1"] = st.data_editor(
+            st.session_state["datasets"]["Dataset 1"], num_rows="dynamic", use_container_width=True
+        )
 
-    # Display the selected dataset
-    st.write("### Selected Dataset:")
-    st.dataframe(demo_datasets[selected_dataset], use_container_width=True, hide_index=True)
+    # Option to Upload a Second CSV
+    if st.session_state["allow_second_upload"]:
+        st.write("### Upload Another Dataset")
+        uploaded_file_2 = st.file_uploader("Upload Second CSV File", type=["csv"], key="file_2")
 
-    # Allow users to edit the dataset
-    st.write("### Edit the Dataset Before Analysis:")
-    editable_dataset = st.data_editor(demo_datasets[selected_dataset], num_rows="dynamic")
+        if uploaded_file_2:
+            try:
+                df2 = pd.read_csv(uploaded_file_2)
+                st.session_state["datasets"]["Dataset 2"] = df2
+            except Exception as e:
+                st.error(f"Error loading the second dataset: {e}")
 
-    # Check if the dataset has been edited
-    if editable_dataset.equals(demo_datasets[selected_dataset]):
-        edited = False
-    else:
-        edited = True
+    # Button to Allow Upload of Second CSV
+    if not st.session_state["allow_second_upload"] and "Dataset 1" in st.session_state["datasets"]:
+        if st.button("Upload Another Dataset"):
+            st.session_state["allow_second_upload"] = True
 
-    # Store the dataset for the analysis
-    dataset_to_analyze = editable_dataset if edited else demo_datasets[selected_dataset]
+    # Editable Dataset for Second Upload
+    if "Dataset 2" in st.session_state["datasets"]:
+        st.write("### Dataset 2 (Editable)")
+        st.session_state["datasets"]["Dataset 2"] = st.data_editor(
+            st.session_state["datasets"]["Dataset 2"], num_rows="dynamic", use_container_width=True
+        )
 
-    # Save the dataset
-    if st.button("Save Changes"):
-        if edited:
-            demo_datasets[selected_dataset] = editable_dataset
-            st.success(f"Changes to '{selected_dataset}' dataset saved successfully!")
-            st.dataframe(editable_dataset)  # Display the updated dataset
-        else:
-            st.warning("No changes detected in the dataset!")
+    # If Only One Dataset Exists, Offer Analysis Button
+    if len(st.session_state["datasets"]) == 1:
+        st.write("### Analyze Dataset 1")
+        query_dataset_1 = st.session_state["datasets"]["Dataset 1"].to_dict(orient="records")
+        anomaly_payload = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies or suspicious crucial for Government operations. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Make sure it follows government norms."
+                    ,
+                },
+                {"role": "user", "content": f"Dataset: {query_dataset_1}"},
+            ],
+            "model": "grok-beta",
+            "stream": False,
+            "temperature": 0,
+        }
+        if st.button("Analyze Dataset 1"):
+            url = "https://api.x.ai/v1/chat/completions"
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer xai-4slNih4UsLZbFmgGKa8sEAn3IEbH01tWdBotTPS1CCxDIryljhcnl6ak6Kn4ega4bgrLIzkotTapmloC",
+            }
+            anomaly_response = requests.post(url, json=anomaly_payload, headers=headers)
 
-    # API configuration
-    url = "https://api.x.ai/v1/chat/completions"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer xai-4slNih4UsLZbFmgGKa8sEAn3IEbH01tWdBotTPS1CCxDIryljhcnl6ak6Kn4ega4bgrLIzkotTapmloC",
-    }
+            if anomaly_response.status_code == 200:
+                anomaly_content = anomaly_response.json()["choices"][0]["message"]["content"]
+                st.markdown(f"### Anomaly Analysis Report:\n{anomaly_content}")
+            else:
+                st.error(f"Error: {anomaly_response.status_code}")
+                st.text(anomaly_response.text)
 
-    # Convert the selected DataFrame to a JSON-like structure for the query
-    query_dataset = dataset_to_analyze.to_dict(orient="records")
+    # If Two Datasets Exist, Combine and Analyze
+    if len(st.session_state["datasets"]) == 2:
+        st.write("### Combine and Analyze Datasets")
+        df1 = st.session_state["datasets"]["Dataset 1"]
+        df2 = st.session_state["datasets"]["Dataset 2"]
 
-    payload = {
-        "messages": [
-            {
-                "role": "system",
-                "content": f"Analyze the dataset below for anomalies in {selected_dataset} and create a table for each record. Detect issues, if present (and not limited to) such as: - Duplicate records. - Mismatched information (e.g., between NPI, claims, and insurance data). - Fraudulent patterns. - Corruption (e.g. Bribes,) - Resource mismanagement (e.g., unused allocations). - Cross-state compliance violations.",
-            },
-            {
-                "role": "user",
-                "content": f"Analyze this dataset for anomalies: {selected_dataset}: {query_dataset}",
-            },
-        ],
-        "model": "grok-beta",
-        "stream": False,
-        "temperature": 0,
-    }
+        combine_prompt = (
+            "Combine the following two datasets into a single cohesive dataset. Ensure all matching columns are aligned, and any non-overlapping columns are included. Return the result as CSV text only and no other stuff whatsoever."
+        )
+        query_dataset_1 = df1.to_dict(orient="records")
+        query_dataset_2 = df2.to_dict(orient="records")
 
-    # Anomaly detection button
-    if st.button("Analyze Data"):
-        response = requests.post(url, json=payload, headers=headers)
+        payload = {
+            "messages": [
+                {"role": "system", "content": combine_prompt},
+                {"role": "user", "content": f"Dataset 1: {query_dataset_1}\nDataset 2: {query_dataset_2}"},
+            ],
+            "model": "grok-beta",
+            "stream": False,
+            "temperature": 0,
+        }
 
-        if response.status_code == 200:
-            st.success("Response Received")
-            response_data = response.json()
+        url = "https://api.x.ai/v1/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer xai-4slNih4UsLZbFmgGKa8sEAn3IEbH01tWdBotTPS1CCxDIryljhcnl6ak6Kn4ega4bgrLIzkotTapmloC",
+        }
 
-            # Extract and display the markdown tables from the response content
-            content = response_data["choices"][0]["message"]["content"]
-            sections = content.split("###")
+        if st.button("Combine Datasets"):
+            response = requests.post(url, json=payload, headers=headers)
 
-            for section in sections:
-                if section.strip():
-                    st.markdown(f"### {section.strip()}")
-        else:
-            st.error(f"Error: {response.status_code}")
-            st.text(response.text)
+            if response.status_code == 200:
+                response_data = response.json()
+                content = response_data["choices"][0]["message"]["content"]
 
-# Placeholder for additional functionality
-def additional_functionality():
-    st.write("Additional functionality can be integrated here.")
+                try:
+                    # Try to parse the CSV data from the response
+                    if "```csv" in content:
+                        csv_start = content.find("```csv") + len("```csv")
+                        csv_end = content.find("```", csv_start)
+                        csv_data = content[csv_start:csv_end].strip()
+
+                        # Parse the CSV text into a Pandas DataFrame
+                        st.session_state["combined_df"] = pd.read_csv(io.StringIO(csv_data))
+
+                        st.write("### Combined Dataset (Editable)")
+                        st.session_state["combined_df"] = st.data_editor(
+                            st.session_state["combined_df"], num_rows="dynamic", use_container_width=True
+                        )
+
+                        # Option to download the combined dataset
+                        csv = st.session_state["combined_df"].to_csv(index=False).encode('utf-8')
+                        st.download_button(
+                            label="Download Combined Dataset",
+                            data=csv,
+                            file_name="combined_dataset.csv",
+                            mime="text/csv",
+                        )
+                    else:
+                        # If no CSV code block is found, raise an exception
+                        raise ValueError("CSV data not found in the response.")
+                except Exception as e:
+                    # st.error(f"Error parsing the combined CSV: {e}")
+                    # Show the response content
+                    st.write("### Response Content")
+                    st.write(content)
+                    # Based on that, analyze the data
+                    st.write("### Analyze Data Based on Response Content")
+                    # Prepare the payload for analysis
+                    anomaly_payload = {
+                        "messages": [
+                            {
+                                "role": "system",
+                                "content": (
+                                    "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies or suspicious crucial for Government operations. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Make sure it follows government norms."
+                                ),
+                            },
+                            {"role": "user", "content": f"Data: {content}"},
+                        ],
+                        "model": "grok-beta",
+                        "stream": False,
+                        "temperature": 0,
+                    }
+
+                    anomaly_response = requests.post(url, json=anomaly_payload, headers=headers)
+
+                    if anomaly_response.status_code == 200:
+                        anomaly_content = anomaly_response.json()["choices"][0]["message"]["content"]
+                        st.markdown(f"### Anomaly Analysis Report:\n{anomaly_content}")
+                    else:
+                        st.error(f"Error: {anomaly_response.status_code}")
+                        st.text(anomaly_response.text)
+            else:
+                st.error(f"Error: {response.status_code}")
+                st.text(response.text)
+
+        # Analyze Combined Dataset
+        if st.session_state["combined_df"] is not None:
+            st.write("### Analyze Combined Dataset for Anomalies")
+            query_combined_dataset = st.session_state["combined_df"].to_dict(orient="records")
+            anomaly_payload = {
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": (
+                            "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies or suspicious crucial for Government operations. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Make sure it follows government norms."
+                        ),
+                    },
+                    {"role": "user", "content": f"Dataset: {query_combined_dataset}"},
+                ],
+                "model": "grok-beta",
+                "stream": False,
+                "temperature": 0,
+            }
+
+            if st.button("Analyze Combined Dataset"):
+                anomaly_response = requests.post(url, json=anomaly_payload, headers=headers)
+
+                if anomaly_response.status_code == 200:
+                    anomaly_content = anomaly_response.json()["choices"][0]["message"]["content"]
+                    st.markdown(f"### Anomaly Analysis Report:\n{anomaly_content}")
+                else:
+                    st.error(f"Error: {anomaly_response.status_code}")
+                    st.text(anomaly_response.text)
