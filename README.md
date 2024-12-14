@@ -2,6 +2,8 @@
 
 Data Vision is the submission of [Ueberanalyse team](https://lablab.ai/event/doge-ai-hackathon/ueberanalyse) for DOGE Hackathon.
 
+Deployed and can be accessed on endpoint: https://data-vision.streamlit.app/
+
 ### Team Members
 1. Aman Arora
 2. Anirudh Sharma
