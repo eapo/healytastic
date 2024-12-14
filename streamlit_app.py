@@ -105,7 +105,7 @@ else:
 
     # Display the selected dataset
     st.write("### Selected Dataset:")
-    st.dataframe(demo_datasets[selected_dataset])
+    st.dataframe(demo_datasets[selected_dataset], use_container_width=True, hide_index=True)
 
     # Allow users to edit the dataset
     st.write("### Edit the Dataset Before Analysis:")
@@ -143,7 +143,7 @@ else:
         "messages": [
             {
                 "role": "system",
-                "content": f"Analyze the dataset below for anomalies in {selected_dataset} and create a table for each record. Detect issues, if present (and not limited to) such as: - Duplicate records. - Mismatched patient information (e.g., between NPI, claims, and insurance data). - Fraudulent billing patterns. - Resource mismanagement (e.g., unused allocations). - Cross-state compliance violations.",
+                "content": f"Analyze the dataset below for anomalies in {selected_dataset} and create a table for each record. Detect issues, if present (and not limited to) such as: - Duplicate records. - Mismatched information (e.g., between NPI, claims, and insurance data). - Fraudulent billing patterns. - Corruption (e.g. Bribes, ) - Resource mismanagement (e.g., unused allocations). - Cross-state compliance violations.",
             },
             {
                 "role": "user",
