@@ -1,8 +1,12 @@
-# 🎬 Movies dataset template
+# Data Vision
 
-A simple Streamlit app showing movie data from [The Movie Database (TMDB)](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata). 
+Data Vision is the submission of [Ueberanalyse team](https://lablab.ai/event/doge-ai-hackathon/ueberanalyse) for DOGE Hackathon.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://movies-dataset-template.streamlit.app/)
+### Team Members
+1. Aman Arora
+2. Anirudh Sharma
+3. Sarah Herrmann
+4. Alexander Schmadlowski
 
 ### How to run it on your own machine
 

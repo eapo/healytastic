@@ -143,7 +143,7 @@ else:
         "messages": [
             {
                 "role": "system",
-                "content": f"Analyze the dataset below for anomalies in {selected_dataset} and create a table for each record. Detect issues, if present (and not limited to) such as: - Duplicate records. - Mismatched information (e.g., between NPI, claims, and insurance data). - Fraudulent billing patterns. - Corruption (e.g. Bribes, ) - Resource mismanagement (e.g., unused allocations). - Cross-state compliance violations.",
+                "content": f"Analyze the dataset below for anomalies in {selected_dataset} and create a table for each record. Detect issues, if present (and not limited to) such as: - Duplicate records. - Mismatched information (e.g., between NPI, claims, and insurance data). - Fraudulent patterns. - Corruption (e.g. Bribes,) - Resource mismanagement (e.g., unused allocations). - Cross-state compliance violations.",
             },
             {
                 "role": "user",
