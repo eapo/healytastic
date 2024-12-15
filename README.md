@@ -1,8 +1,8 @@
-# Data Vision
+# Healytastic
 
-Data Vision is the submission of [Ueberanalyse team](https://lablab.ai/event/doge-ai-hackathon/ueberanalyse) for DOGE Hackathon.
+Healytastic is the submission of [Ueberanalyse team](https://lablab.ai/event/doge-ai-hackathon/ueberanalyse) for DOGE Hackathon.
 
-Deployed and can be accessed on endpoint: https://data-vision.streamlit.app/
+Deployed and can be accessed on endpoint: https://healytastic.streamlit.app/
 
 ### Team Members
 1. Aman Arora
