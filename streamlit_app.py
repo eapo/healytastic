@@ -6,8 +6,8 @@ import firebase_admin
 from firebase_admin import credentials, db, auth
 
 # Streamlit app configuration
-st.set_page_config(page_title="DataVision.AI", page_icon="📊")
-st.title("DataVision.AI")
+st.set_page_config(page_title="Healytastic", page_icon="📊")
+st.title("Healytastic")
 
 firebase_key = st.secrets["SERVICE_ACCOUNT_KEY"]
 firebase_key_dict = dict(firebase_key)
