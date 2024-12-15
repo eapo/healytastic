@@ -1,0 +1,11 @@
+PersonID,Name,BirthDate,IdentificationNumber,Region,Residence,HealthPlan,ClinicalConditions,CurrentlyEnrolled,PreviousConsultation,SupportAllocation
+1,Patricia McGee,1980-03-10,ID-123-45-6789,NY,789 Pine Street,Humana,"Diabetes mellitus, Hypertensio arterialis",TRUE,2023-12-01,Assigned
+2,Shirley Wilson,1975-08-25,ID-987-65-4321,IL,101 Maple Avenue,Aetna,Cardiopathia ischaemica,TRUE,2024-01-15,Pending
+3,Manuel Soarez,1980-03-10,ID-123-45-6789,NY,789 Pine Street,Humana,"Diabetes mellitus, Hypertensio arterialis",TRUE,2023-12-01,Duplicate Entry
+4,Kevin Meyers,1990-05-15,ID-555-55-5555,TX,(No Residence),Cigna,Asthma bronchiale,TRUE,(No Date),Missing Details
+5,Melon Eusk,1985-07-20,ID-333-33-3333,CA,321 Oak Avenue,Aetna,Dorsalgia chronica (Chronic Back Pain),TRUE,2023-06-05,Assigned
+6,Teddy Bear,1972-11-01,INVALID-123,FL,456 Elm Street,Humana,Hypertensio arterialis,FALSE,2022-10-12,Invalid ID
+7,Billie Miller ,1988-02-14,ID-222-22-2222,PA,567 Cedar Lane,(None),Nulla (No known conditions),TRUE,2023-11-20,Missing HealthPlan
+8,Kristina Johnson,1965-01-10,ID-444-44-4444,TX,890 Birch Drive,Cigna,Cardiopathia ischaemica,FALSE,2021-04-15,Inactive
+9,Phil Gambino,1995-12-31,ID-666-66-6666,CA,789 Pine Street,Medicaid,Graviditas (Pregnancy),TRUE,2023-09-10,Assigned
+10,Robin Tanner,1980-03-10,ID-777-77-7777,IL,(No Residence),(None),"Obesitas, Diabetes mellitus",TRUE,2024-01-10,Missing Residence & HealthPlan

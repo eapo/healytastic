@@ -1,0 +1,6 @@
+PersonID,Name,BirthDate,IdentificationNumber,Region,Residence,HealthPlan,ClinicalConditions,CurrentlyEnrolled,PreviousConsultation,SupportAllocation
+11,Alice Baker,1990-07-11,ID-888-88-8888,CA,123 Willow Lane,Kaiser,Hypercholesterolemia,TRUE,2023-10-11,Assigned
+12,John Doe,1984-02-29,ID-999-99-9999,NY,456 Maple Drive,Blue Shield,Diabetes mellitus,FALSE,2022-12-15,Invalid ID
+13,Sarah Connor,1978-05-12,ID-111-11-1111,TX,789 Cedar Ave,Humana,Cardiopathia ischaemica,TRUE,2024-01-05,Pending
+14,Mike Ross,2000-01-01,ID-222-22-3333,FL,(No Residence), (None),Nulla (No known conditions),FALSE,(No Date),Missing Details
+15,Jane Smith,1995-09-23,ID-444-55-6666,IL,890 Birch Blvd,Medicare,Arthritis rheumatica,TRUE,2023-11-30,Assigned
