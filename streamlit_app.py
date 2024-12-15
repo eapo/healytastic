@@ -82,6 +82,25 @@ else:
         st.session_state["email"] = ""
         st.rerun()
 
+    if st.button("Access or Upload Policy"):
+        st.info("This feature allows the official to view or upload policies regarding the procedures to follow in case discrepancies are detected in the data. Please refer to the updated data policies.")
+        # Simulating the action without functional back-end logic for now
+        st.write("Accessing or upload a list of internal policies...")
+        
+        # Example policies list
+        policies = [
+            "Policy 1: [2024] Handling Data Inaccuracies in Public Health Reporting",
+            "Policy 2: [2024] Updated Procedures for Data Verification",
+            "Policy 3: [2023] Medical policy specifics for non-US nationals.",
+            "Policy 4: [2022] Health insurance handbook.",
+        ]
+        
+        # Adding a dropdown using selectbox
+        selected_policy = st.selectbox("Choose a policy for this scenario:", policies)
+        
+        # Display the selected policy (or details about it)
+        st.write(f"You selected: {selected_policy}")
+
     # Single CSV Upload by Default
     st.write("### Upload Your Dataset")
     uploaded_file_1 = st.file_uploader("Upload First CSV File", type=["csv"], key="file_1")
