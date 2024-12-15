@@ -2,7 +2,7 @@
 
 Healytastic is the submission of [Ueberanalyse team](https://lablab.ai/event/doge-ai-hackathon/ueberanalyse) for DOGE Hackathon.
 
-Deployed and can be accessed on endpoint: https://healytastic-ai.streamlit.app/
+Deployed and can be accessed on endpoint: https://healytastic.streamlit.app/
 
 ### Team Members
 1. [Aman Arora](https://www.linkedin.com/in/aman-arora9848/)
