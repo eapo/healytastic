@@ -9,6 +9,7 @@ Deployed and can be accessed on endpoint: https://healytastic.streamlit.app/
 2. [Anirudh Sharma](https://www.linkedin.com/in/reachanihere/)
 3. [Sarah Herrmann](https://www.linkedin.com/in/sarahherrmann/)
 4. [Alexander Schmadlowski](https://www.linkedin.com/in/lets-connect-alexander-cedric-schmadlowski/)
+5. [Shankho Boron Ghosh](https://www.linkedin.com/in/shankho-ghosh/)
 
 ### How to run it on your own machine
 
