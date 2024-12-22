@@ -9,6 +9,7 @@ from firebase_admin import credentials, db, auth
 st.set_page_config(page_title="Healytastic", page_icon="📊")
 st.title("Healytastic")
 
+gpt_key = st.secrets["GPT_KEY"]
 firebase_key = st.secrets["SERVICE_ACCOUNT_KEY"]
 firebase_key_dict = dict(firebase_key)
 
@@ -17,7 +18,7 @@ if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_key_dict)
     # cred = credentials.Certificate("serviceAccountKey.json")
     firebase_admin.initialize_app(cred, {
-        "databaseURL": "https://data-vision-4b7ba-default-rtdb.firebaseio.com"
+        "databaseURL": "https://csvdataset-default-rtdb.europe-west1.firebasedatabase.app/"
     })
 
 # Firebase Authentication Helper Functions
@@ -145,14 +146,18 @@ else:
 
     # If Only One Dataset Exists, Offer Analysis Button
     if len(st.session_state["datasets"]) == 1:
+        custom_query = st.text_input("Custom query")
+        # Check if the submitted custom query is empty.
+        if not custom_query:
+            custom_query = "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Also, provide a table with the anomalies, their corresponding entries and the solutions/suggested action."
+
         st.write("### Analyze Dataset 1")
         query_dataset_1 = st.session_state["datasets"]["Dataset 1"].to_dict(orient="records")
         anomaly_payload = {
             "messages": [
                 {
                     "role": "system",
-                    "content": "Analyze the following dataset for anomalies which are not only limited to data validation but can also include anomalies or suspicious crucial for Government operations. Detect issues such as duplicate records, mismatched information, fraudulent patterns, and compliance violations, etc. Return a detailed report. Make sure it follows government norms. Also, provide a table with the anomalies, their corresponding entries and the solutions/suggested action."
-                    ,
+                    "content": custom_query,
                 },
                 {"role": "user", "content": f"Dataset: {query_dataset_1}"},
             ],
@@ -164,7 +169,7 @@ else:
             url = "https://api.x.ai/v1/chat/completions"
             headers = {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer xai-4slNih4UsLZbFmgGKa8sEAn3IEbH01tWdBotTPS1CCxDIryljhcnl6ak6Kn4ega4bgrLIzkotTapmloC",
+                "Authorization": f"Bearer {gpt_key}",
             }
             anomaly_response = requests.post(url, json=anomaly_payload, headers=headers)
 
