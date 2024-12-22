@@ -6,8 +6,8 @@ import firebase_admin
 from firebase_admin import credentials, db, auth
 
 # Streamlit app configuration
-st.set_page_config(page_title="Healytastic", page_icon="📊")
-st.title("Healytastic")
+st.set_page_config(page_title="CSV Processing with GPT", page_icon="📊")
+st.title("CSV Processing with GPT")
 
 gpt_key = st.secrets["GPT_KEY"]
 firebase_key = st.secrets["SERVICE_ACCOUNT_KEY"]
@@ -209,7 +209,7 @@ else:
         url = "https://api.x.ai/v1/chat/completions"
         headers = {
             "Content-Type": "application/json",
-            "Authorization": "Bearer xai-4slNih4UsLZbFmgGKa8sEAn3IEbH01tWdBotTPS1CCxDIryljhcnl6ak6Kn4ega4bgrLIzkotTapmloC",
+            "Authorization": f"Bearer {gpt_key}",
         }
 
         if st.button("Combine Datasets"):
