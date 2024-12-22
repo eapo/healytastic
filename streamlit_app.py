@@ -2,86 +2,14 @@ import io
 import pandas as pd
 import streamlit as st
 import requests
-import firebase_admin
-from firebase_admin import credentials, db, auth
 
 # Streamlit app configuration
 st.set_page_config(page_title="CSV Processing with GPT", page_icon="📊")
 st.title("CSV Processing with GPT")
 
 gpt_key = st.secrets["GPT_KEY"]
-firebase_key = st.secrets["SERVICE_ACCOUNT_KEY"]
-firebase_key_dict = dict(firebase_key)
 
-# Initialize Firebase Admin SDK
-if not firebase_admin._apps:
-    cred = credentials.Certificate(firebase_key_dict)
-    # cred = credentials.Certificate("serviceAccountKey.json")
-    firebase_admin.initialize_app(cred, {
-        "databaseURL": "https://csvdataset-default-rtdb.europe-west1.firebasedatabase.app/"
-    })
-
-# Firebase Authentication Helper Functions
-def register_user(email, password):
-    try:
-        user = auth.create_user(email=email, password=password)
-        return {"status": "success", "message": f"User {email} registered successfully!"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def login_user(email, password):
-    ref = db.reference(f"users/{email.replace('.', ',')}").get()
-    if ref and ref["password"] == password:
-        return {"status": "success", "message": "Login successful!"}
-    return {"status": "error", "message": "Invalid credentials."}
-
-def save_user_to_db(email, password):
-    ref = db.reference(f"users/{email.replace('.', ',')}")
-    ref.set({"email": email, "password": password})
-
-# Initialize session state
-if "logged_in" not in st.session_state:
-    st.session_state["logged_in"] = False
-    st.session_state["email"] = ""
-if "datasets" not in st.session_state:
-    st.session_state["datasets"] = {}  # Dictionary to store uploaded datasets
-if "combined_df" not in st.session_state:
-    st.session_state["combined_df"] = None
-if "allow_second_upload" not in st.session_state:
-    st.session_state["allow_second_upload"] = False  # Control upload of second CSV
-
-# Login and Registration Workflow
-if not st.session_state["logged_in"]:
-    st.subheader("Login")
-    login_email = st.text_input("Email")
-    login_password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        result = login_user(login_email, login_password)
-        if result["status"] == "success":
-            st.session_state["logged_in"] = True
-            st.session_state["email"] = login_email
-            st.success(result["message"])
-            st.rerun()
-        else:
-            st.error(result["message"])
-
-    st.subheader("Register")
-    reg_email = st.text_input("New Email")
-    reg_password = st.text_input("New Password", type="password")
-    if st.button("Register"):
-        result = register_user(reg_email, reg_password)
-        if result["status"] == "success":
-            save_user_to_db(reg_email, reg_password)
-            st.success(result["message"])
-        else:
-            st.error(result["message"])
-else:
-    # Main App Functionality After Login
-    st.success(f"Welcome, {st.session_state['email']}!")
-    if st.button("Logout"):
-        st.session_state["logged_in"] = False
-        st.session_state["email"] = ""
-        st.rerun()
+# Main App Functionality
 
     if st.button("Access or Upload Policy"):
         st.info("This feature allows the official to view or upload policies regarding the procedures to follow in case discrepancies are detected in the data. Please refer to the updated data policies.")
